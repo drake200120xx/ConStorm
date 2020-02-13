@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>cons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -114,7 +114,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>cons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -132,7 +132,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>cons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -154,7 +154,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>cons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -173,35 +173,35 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\file.hpp" />
-    <ClInclude Include="include\files\file.hpp" />
-    <ClInclude Include="include\files\load.hpp" />
-    <ClInclude Include="include\input.hpp" />
-    <ClInclude Include="include\input\input_function.hpp" />
-    <ClInclude Include="include\input\input_set.hpp" />
-    <ClInclude Include="include\input\pause.hpp" />
-    <ClInclude Include="include\menus.hpp" />
-    <ClInclude Include="include\menus\exit.hpp" />
-    <ClInclude Include="include\menus\function.hpp" />
-    <ClInclude Include="include\menus\function\default.hpp" />
-    <ClInclude Include="include\menus\function\no_params.hpp" />
-    <ClInclude Include="include\menus\function\void_params.hpp" />
-    <ClInclude Include="include\menus\info.hpp" />
-    <ClInclude Include="include\menus\input.hpp" />
-    <ClInclude Include="include\menus\interface.hpp" />
-    <ClInclude Include="include\menus\loop.hpp" />
-    <ClInclude Include="include\menus\menu.hpp" />
-    <ClInclude Include="include\output.hpp" />
-    <ClInclude Include="include\output\clear_screen.hpp" />
-    <ClInclude Include="include\output\header.hpp" />
-    <ClInclude Include="include\output\print.hpp" />
-    <ClInclude Include="include\output\println.hpp" />
-    <ClInclude Include="include\output\println\master.hpp" />
-    <ClInclude Include="include\output\println\set.hpp" />
-    <ClInclude Include="include\output\println\textf.hpp" />
-    <ClInclude Include="include\output\println\vector.hpp" />
-    <ClInclude Include="include\output\prompt.hpp" />
-    <ClInclude Include="include\output\word_wrap.hpp" />
+    <ClInclude Include="cons\file.hpp" />
+    <ClInclude Include="cons\files\file.hpp" />
+    <ClInclude Include="cons\files\load.hpp" />
+    <ClInclude Include="cons\input.hpp" />
+    <ClInclude Include="cons\input\input_function.hpp" />
+    <ClInclude Include="cons\input\input_set.hpp" />
+    <ClInclude Include="cons\input\pause.hpp" />
+    <ClInclude Include="cons\menus.hpp" />
+    <ClInclude Include="cons\menus\exit.hpp" />
+    <ClInclude Include="cons\menus\function.hpp" />
+    <ClInclude Include="cons\menus\function\default.hpp" />
+    <ClInclude Include="cons\menus\function\no_params.hpp" />
+    <ClInclude Include="cons\menus\function\void_params.hpp" />
+    <ClInclude Include="cons\menus\info.hpp" />
+    <ClInclude Include="cons\menus\input.hpp" />
+    <ClInclude Include="cons\menus\interface.hpp" />
+    <ClInclude Include="cons\menus\loop.hpp" />
+    <ClInclude Include="cons\menus\menu.hpp" />
+    <ClInclude Include="cons\output.hpp" />
+    <ClInclude Include="cons\output\clear_screen.hpp" />
+    <ClInclude Include="cons\output\header.hpp" />
+    <ClInclude Include="cons\output\print.hpp" />
+    <ClInclude Include="cons\output\println.hpp" />
+    <ClInclude Include="cons\output\println\master.hpp" />
+    <ClInclude Include="cons\output\println\set.hpp" />
+    <ClInclude Include="cons\output\println\textf.hpp" />
+    <ClInclude Include="cons\output\println\vector.hpp" />
+    <ClInclude Include="cons\output\prompt.hpp" />
+    <ClInclude Include="cons\output\word_wrap.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\files\file.cpp" />

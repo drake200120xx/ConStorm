@@ -3,8 +3,8 @@
 */
 
 #include "menus/info.hpp"
-#include "input/pause.hpp"
-#include "output/clear_screen.hpp"
+#include "output.hpp"
+#include "input.hpp"
 
 namespace cons
 {

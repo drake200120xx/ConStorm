@@ -73,41 +73,41 @@ namespace cons
 		[[nodiscard]] openmode get_openmode() const { return m_openmode; }
 		[[nodiscard]] std::streampos get_file_length() const;
 
-		std::istream& operator>>(bool& val) { return common_extract(val); }
-		std::istream& operator>>(short& val) { return common_extract(val); }
-		std::istream& operator>>(unsigned short& val) { return common_extract(val); }
-		std::istream& operator>>(int& val) { return common_extract(val); }
-		std::istream& operator>>(unsigned& val) { return common_extract(val); }
-		std::istream& operator>>(long& val) { return common_extract(val); }
-		std::istream& operator>>(unsigned long& val) { return common_extract(val); }
-		std::istream& operator>>(long long& val) { return common_extract(val); }
+		std::istream& operator>>(bool& val)               { return common_extract(val); }
+		std::istream& operator>>(short& val)              { return common_extract(val); }
+		std::istream& operator>>(unsigned short& val)     { return common_extract(val); }
+		std::istream& operator>>(int& val)                { return common_extract(val); }
+		std::istream& operator>>(unsigned& val)           { return common_extract(val); }
+		std::istream& operator>>(long& val)               { return common_extract(val); }
+		std::istream& operator>>(unsigned long& val)      { return common_extract(val); }
+		std::istream& operator>>(long long& val)          { return common_extract(val); }
 		std::istream& operator>>(unsigned long long& val) { return common_extract(val); }
-		std::istream& operator>>(float& val) { return common_extract(val); }
-		std::istream& operator>>(double& val) { return common_extract(val); }
-		std::istream& operator>>(long double& val) { return common_extract(val); }
-		std::istream& operator>>(void*& val) { return common_extract(val); }
-		std::istream& operator>>(std::string& val) { return common_extract(val); }
-		std::istream& operator>>(std::streambuf* val) { return common_extract(val); }
+		std::istream& operator>>(float& val)              { return common_extract(val); }
+		std::istream& operator>>(double& val)             { return common_extract(val); }
+		std::istream& operator>>(long double& val)        { return common_extract(val); }
+		std::istream& operator>>(void*& val)              { return common_extract(val); }
+		std::istream& operator>>(std::string& val)        { return common_extract(val); }
+		std::istream& operator>>(std::streambuf* val)     { return common_extract(val); }
 		std::istream& operator>>(std::istream& (*pf)(std::istream&));
 		std::istream& operator>>(std::ios& (*pf)(std::ios&));
 		std::istream& operator>>(std::ios_base& (*pf)(std::ios_base&));
 
-		std::ostream& operator<<(bool& val) { return common_insert(val); }
-		std::ostream& operator<<(short& val) { return common_insert(val); }
-		std::ostream& operator<<(unsigned short& val) { return common_insert(val); }
-		std::ostream& operator<<(int& val) { return common_insert(val); }
-		std::ostream& operator<<(unsigned& val) { return common_insert(val); }
-		std::ostream& operator<<(long& val) { return common_insert(val); }
-		std::ostream& operator<<(unsigned long& val) { return common_insert(val); }
-		std::ostream& operator<<(long long& val) { return common_insert(val); }
+		std::ostream& operator<<(bool& val)               { return common_insert(val); }
+		std::ostream& operator<<(short& val)              { return common_insert(val); }
+		std::ostream& operator<<(unsigned short& val)     { return common_insert(val); }
+		std::ostream& operator<<(int& val)                { return common_insert(val); }
+		std::ostream& operator<<(unsigned& val)           { return common_insert(val); }
+		std::ostream& operator<<(long& val)               { return common_insert(val); }
+		std::ostream& operator<<(unsigned long& val)      { return common_insert(val); }
+		std::ostream& operator<<(long long& val)          { return common_insert(val); }
 		std::ostream& operator<<(unsigned long long& val) { return common_insert(val); }
-		std::ostream& operator<<(float& val) { return common_insert(val); }
-		std::ostream& operator<<(double& val) { return common_insert(val); }
-		std::ostream& operator<<(long double& val) { return common_insert(val); }
-		std::ostream& operator<<(void*& val) { return common_insert(val); }
-		std::ostream& operator<<(const char* val) { return common_insert(val); }
-		std::ostream& operator<<(std::string& val) { return common_insert(val); }
-		std::ostream& operator<<(std::streambuf* val) { return common_insert(val); }
+		std::ostream& operator<<(float& val)              { return common_insert(val); }
+		std::ostream& operator<<(double& val)             { return common_insert(val); }
+		std::ostream& operator<<(long double& val)        { return common_insert(val); }
+		std::ostream& operator<<(void*& val)              { return common_insert(val); }
+		std::ostream& operator<<(const char* val)         { return common_insert(val); }
+		std::ostream& operator<<(std::string& val)        { return common_insert(val); }
+		std::ostream& operator<<(std::streambuf* val)     { return common_insert(val); }
 		std::ostream& operator<<(std::ostream& (*pf)(std::ostream&));
 		std::ostream& operator<<(std::ios& (*pf)(std::ios&));
 		std::ostream& operator<<(std::ios_base& (*pf)(std::ios_base&));

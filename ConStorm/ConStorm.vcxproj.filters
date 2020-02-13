@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="include">
-      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    <Filter Include="cons">
+      <UniqueIdentifier>{D83F957C-C476-960D-6D63-7C105979120F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\file">
-      <UniqueIdentifier>{7808DB69-646B-6A0E-0DF1-A2C4F9323691}</UniqueIdentifier>
+    <Filter Include="cons\files">
+      <UniqueIdentifier>{7A677FD5-661F-C122-CF26-9A7EBBFD5B13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\input">
-      <UniqueIdentifier>{683275A5-D4F2-F0DB-9D2D-3A5909AD35B8}</UniqueIdentifier>
+    <Filter Include="cons\input">
+      <UniqueIdentifier>{F781B8D5-E339-FA22-4C41-D37E38189513}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\menus">
-      <UniqueIdentifier>{809CB8A5-EC5C-34DC-B597-7D59211779B8}</UniqueIdentifier>
+    <Filter Include="cons\menus">
+      <UniqueIdentifier>{0FECFBD5-FBA3-3D23-64AB-167F5082D813}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\menus\function">
-      <UniqueIdentifier>{F559BAC5-E153-E317-CAC0-7928B6594984}</UniqueIdentifier>
+    <Filter Include="cons\menus\function">
+      <UniqueIdentifier>{649A0D76-D0FB-EA83-5969-3136C5C92143}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\output">
-      <UniqueIdentifier>{893B9B62-7509-8F68-5E9D-FF8E4A0A6BCD}</UniqueIdentifier>
+    <Filter Include="cons\output">
+      <UniqueIdentifier>{F87C489B-6432-C190-ED26-BB6759DBB794}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\output\println">
-      <UniqueIdentifier>{5FD065F1-4BCA-8E43-3437-255420D0F4AF}</UniqueIdentifier>
+    <Filter Include="cons\output\println">
+      <UniqueIdentifier>{CE10B9A1-3A72-96AF-C3DF-DC612F40CD6E}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\files">
+      <UniqueIdentifier>{8F3E2DB5-FBA8-E12B-44E7-92D1B090BF80}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\input">
       <UniqueIdentifier>{0C5966B5-78C3-1A2C-C101-CCD12DABF880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\menus">
+      <UniqueIdentifier>{24C3A9B5-902D-5E2C-D96B-0FD245153C81}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\output">
       <UniqueIdentifier>{AD36B170-99EE-F2BD-02F6-CB19EECC8DAE}</UniqueIdentifier>
@@ -36,95 +42,101 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\file.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="cons\file.hpp">
+      <Filter>cons</Filter>
     </ClInclude>
-    <ClInclude Include="include\input.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="cons\files\file.hpp">
+      <Filter>cons\files</Filter>
     </ClInclude>
-    <ClInclude Include="include\input\input_function.hpp">
-      <Filter>include\input</Filter>
+    <ClInclude Include="cons\files\load.hpp">
+      <Filter>cons\files</Filter>
     </ClInclude>
-    <ClInclude Include="include\input\input_set.hpp">
-      <Filter>include\input</Filter>
+    <ClInclude Include="cons\input.hpp">
+      <Filter>cons</Filter>
     </ClInclude>
-    <ClInclude Include="include\input\pause.hpp">
-      <Filter>include\input</Filter>
+    <ClInclude Include="cons\input\input_function.hpp">
+      <Filter>cons\input</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="cons\input\input_set.hpp">
+      <Filter>cons\input</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\exit.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\input\pause.hpp">
+      <Filter>cons\input</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\function.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\menus.hpp">
+      <Filter>cons</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\function\default.hpp">
-      <Filter>include\menus\function</Filter>
+    <ClInclude Include="cons\menus\exit.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\function\no_params.hpp">
-      <Filter>include\menus\function</Filter>
+    <ClInclude Include="cons\menus\function.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\function\void_params.hpp">
-      <Filter>include\menus\function</Filter>
+    <ClInclude Include="cons\menus\function\default.hpp">
+      <Filter>cons\menus\function</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\info.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\menus\function\no_params.hpp">
+      <Filter>cons\menus\function</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\input.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\menus\function\void_params.hpp">
+      <Filter>cons\menus\function</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\interface.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\menus\info.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\loop.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\menus\input.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\menus\menu.hpp">
-      <Filter>include\menus</Filter>
+    <ClInclude Include="cons\menus\interface.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\output.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="cons\menus\loop.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\clear_screen.hpp">
-      <Filter>include\output</Filter>
+    <ClInclude Include="cons\menus\menu.hpp">
+      <Filter>cons\menus</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\header.hpp">
-      <Filter>include\output</Filter>
+    <ClInclude Include="cons\output.hpp">
+      <Filter>cons</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\print.hpp">
-      <Filter>include\output</Filter>
+    <ClInclude Include="cons\output\clear_screen.hpp">
+      <Filter>cons\output</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\println.hpp">
-      <Filter>include\output</Filter>
+    <ClInclude Include="cons\output\header.hpp">
+      <Filter>cons\output</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\println\master.hpp">
-      <Filter>include\output\println</Filter>
+    <ClInclude Include="cons\output\print.hpp">
+      <Filter>cons\output</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\println\set.hpp">
-      <Filter>include\output\println</Filter>
+    <ClInclude Include="cons\output\println.hpp">
+      <Filter>cons\output</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\println\textf.hpp">
-      <Filter>include\output\println</Filter>
+    <ClInclude Include="cons\output\println\master.hpp">
+      <Filter>cons\output\println</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\println\vector.hpp">
-      <Filter>include\output\println</Filter>
+    <ClInclude Include="cons\output\println\set.hpp">
+      <Filter>cons\output\println</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\prompt.hpp">
-      <Filter>include\output</Filter>
+    <ClInclude Include="cons\output\println\textf.hpp">
+      <Filter>cons\output\println</Filter>
     </ClInclude>
-    <ClInclude Include="include\output\word_wrap.hpp">
-      <Filter>include\output</Filter>
+    <ClInclude Include="cons\output\println\vector.hpp">
+      <Filter>cons\output\println</Filter>
     </ClInclude>
-    <ClInclude Include="include\files\file.hpp">
-      <Filter>include\file</Filter>
+    <ClInclude Include="cons\output\prompt.hpp">
+      <Filter>cons\output</Filter>
     </ClInclude>
-    <ClInclude Include="include\files\load.hpp">
-      <Filter>include\file</Filter>
+    <ClInclude Include="cons\output\word_wrap.hpp">
+      <Filter>cons\output</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\files\file.cpp">
+      <Filter>src\files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\files\load.cpp">
+      <Filter>src\files</Filter>
+    </ClCompile>
     <ClCompile Include="src\input\input_function.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
@@ -133,6 +145,18 @@
     </ClCompile>
     <ClCompile Include="src\input\pause.cpp">
       <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menus\exit.cpp">
+      <Filter>src\menus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menus\info.cpp">
+      <Filter>src\menus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menus\loop.cpp">
+      <Filter>src\menus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menus\menu.cpp">
+      <Filter>src\menus</Filter>
     </ClCompile>
     <ClCompile Include="src\output\clear_screen.cpp">
       <Filter>src\output</Filter>
@@ -146,11 +170,5 @@
     <ClCompile Include="src\output\word_wrap.cpp">
       <Filter>src\output</Filter>
     </ClCompile>
-    <ClCompile Include="src\menus\menu.cpp" />
-    <ClCompile Include="src\menus\exit.cpp" />
-    <ClCompile Include="src\menus\info.cpp" />
-    <ClCompile Include="src\menus\loop.cpp" />
-    <ClCompile Include="src\files\file.cpp" />
-    <ClCompile Include="src\files\load.cpp" />
   </ItemGroup>
 </Project>

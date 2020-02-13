@@ -10,7 +10,7 @@
 #   include <windows.h>
 namespace cons
 {
-    inline void clear_screen()
+    void clear_screen()
     {
         constexpr int FAIL = 0;
         HANDLE std_out_h = GetStdHandle(STD_OUTPUT_HANDLE);

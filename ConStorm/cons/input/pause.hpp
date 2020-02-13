@@ -22,6 +22,6 @@ namespace cons
 
 	 @param msg The prompt to display to the user to continue past the pause
 	*/
-	inline void pause(const std::string& msg = "Press any key to continue...");
+	void pause(const std::string& msg = "Press any key to continue...");
 } // namespace cons
 #endif // !CONS_PAUSE_HEADER__
