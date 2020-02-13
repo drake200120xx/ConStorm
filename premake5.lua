@@ -5,7 +5,7 @@ workspace "ConStorm"
 	staticruntime "On"
 	systemversion "latest"
 
-cons_include = "%{wks.location}/ConStorm/include"
+cons_include = "%{wks.location}/ConStorm/cons"
 sandbox_lib = "%{wks.location}Sandbox/lib/"
 bin_output = "%{prj.location}/bin/%{cfg.buildcfg}-%{cfg.architecture}/"
 obj_output = "%{prj.location}/obj/%{cfg.buildcfg}-%{cfg.architecture}/"
@@ -16,18 +16,17 @@ project "ConStorm"
 	language "C++"
 	location "ConStorm"
 	files {
-		"%{prj.location}/include/**.h",
-		"%{prj.location}/include/**.hpp",
-		"%{prj.location}/include/**.cpp",
+		"%{prj.location}/cons/**.h",
+		"%{prj.location}/cons/**.hpp",
+		"%{prj.location}/cons/**.cpp",
 		"%{prj.location}/src/**.h",
 		"%{prj.location}/src/**.hpp",
 		"%{prj.location}/src/**.cpp"
 	}
 	targetdir (bin_output)
 	objdir (obj_output)
-
-	includedirs { 
-		"%{prj.name}/include"
+	includedirs {
+		"%{prj.location}/cons"
 	}
 	
 	postbuildcommands {
