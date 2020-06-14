@@ -1,8 +1,7 @@
 /*
  Code by Drake Johnson
 */
-
-#include "files/file.hpp"
+#include "../../include/cons/files/file.hpp"
 
 namespace cons
 {
@@ -94,6 +93,12 @@ namespace cons
 		m_output_stream.seekp(offset, rel_pos);
 	}
 
+	void File::delete_file()
+	{
+		close_streams_();
+		delete_file(*this);
+	}
+
 	std::streampos File::get_file_length() const
 	{
 		#pragma warning(disable:26812)
@@ -183,4 +188,24 @@ namespace cons
 			print("STREAM ERROR: Unknown");
 		}
 	}
+
+	bool File::delete_file(const std::filesystem::path& path)
+	{
+		bool success = false;
+
+		if (fs::exists(path) && !fs::is_directory(path))
+		{
+			fs::remove(path);
+			success = true;
+		}
+
+		return success;
+	}
+
+	bool File::delete_file(const File& file)
+	{
+		return delete_file(file.get_path());
+	}
+
+
 } // namespace cons

@@ -1,89 +1,119 @@
 /*
  Code by Drake Johnson
 */
-#include "output/println/textf.hpp"
-#include <exception>
+#include <cons/output/println/textf.hpp>
 
 namespace cons
 {
-	// Exception struct for invalid enum class values
-	struct InvalidEnumValueException : std::exception
+	textf::textf(std::string text)
+		: text_(std::move(text))
+		, color_(ConsoleColor::color::bright_white, ConsoleColor::color::black)
+	{}
+
+	textf::textf(const textf& other)
+		: color_(ConsoleColor::color::bright_white, ConsoleColor::color::black)
 	{
-	private:
-		const char* m_enum_name;
+		copy(*this, other);
+	}
 
-	public:
-		InvalidEnumValueException(const char* enum_name) :
-			m_enum_name(enum_name)
-		{}
+	textf::textf(textf&& other) noexcept
+		: color_(ConsoleColor::color::bright_white, ConsoleColor::color::black)
+	{
+		move(*this, std::move(other));
+	}
 
-		[[nodiscard]] const char* what() const override
+	textf& textf::operator=(const textf& other)
+	{
+		if (this != &other)
+			copy(*this, other);
+		return *this;
+	}
+
+	textf& textf::operator=(textf&& other) noexcept
+	{
+		if (this != &other)
+			move(*this, std::move(other));
+		return *this;
+	}
+
+	void textf::display() const
+	{
+		const auto old_attribs = setup_console();
+		std::cout << std::flush << text_;
+		restore_console(old_attribs);
+	}
+
+	void textf::modify_color(const layer layer, const ConsoleColor color)
+	{
+		WORD new_win_color;
+		auto win_fg = static_cast<WORD>(color.get_foreground_color());
+		auto win_bg = static_cast<WORD>(color.get_background_color()) * 16;
+
+		switch (layer)
 		{
-			const auto pref = "\nINVALID ";
-			const auto mid = " VALUE!\nWAS AN INVALID VALUE CASTED TO ";
-			const auto suff = "?\n";
+		case layer::foreground:
+			new_win_color = static_cast<WORD>(color.get_foreground_color());
+			win_fg |= new_win_color;
+			color_.set_foreground_color(static_cast<ConsoleColor::color>(win_fg));
+			break;
 
-			const auto name_size = strlen(m_enum_name);
-			const auto pref_size = strlen(pref);
-			const auto mid_size = strlen(mid);
-			const auto suff_size = strlen(suff);
-			const auto err_size = name_size * 2 + pref_size + mid_size + suff_size + 1;
+		case layer::background:
+			new_win_color = static_cast<WORD>(color.get_background_color()) * 16;
+			win_bg |= new_win_color;
+			color_.set_background_color(static_cast<ConsoleColor::color>(win_bg));
+			break;
 
-			auto err = std::make_unique<char[]>(err_size);
-			err[err_size - 1] = '\0';
-
-			memcpy(err.get(), pref, pref_size);
-			auto pos = pref_size;
-
-			memcpy(err.get() + pos, m_enum_name, name_size);
-			pos += name_size;
-
-			memcpy(err.get() + pos, mid, mid_size);
-			pos += mid_size;
-
-			memcpy(err.get() + pos, m_enum_name, name_size);
-			pos += name_size;
-
-			memcpy(err.get() + pos, suff, suff_size);
-
-			return err.get();
+		default:
+			throw InvalidConsoleLayerEnumValueException();
 		}
-	};
-
-	/**
-	 Exception struct for invalid ConsoleColor values
-	*/
-	struct InvalidConsoleColorValueException : InvalidEnumValueException
-	{
-		InvalidConsoleColorValueException() :
-			InvalidEnumValueException("ConsoleColor")
-		{}
-	};
-	
-	/**
-	 Exception struct for invalid Layer values
-	*/
-	struct InvalidLayerValueException : InvalidEnumValueException
-	{
-		InvalidLayerValueException() :
-			InvalidEnumValueException("Layer")
-		{}
-	};
-
-	const char* WindowsConsoleFailureException::what() const
-	{
-		return "\nWINDOWS CONSOLE API FAILURE!\nPLEASE REVIEW THE CALL STACK!\n";
 	}
 
-
-	WORD textf::getWinColorCode(ConsoleColor color)
+	void textf::reset_color()
 	{
-		return static_cast<WORD>(color);
+		color_.set_foreground_color(ConsoleColor::color::bright_white);
+		color_.set_background_color(ConsoleColor::color::black);
 	}
 
-	WORD textf::getWinColor(const ConsoleColor fg, const ConsoleColor bg)
+	void textf::set_text(std::string text)
 	{
-		return getWinColorCode(fg) + 16 * getWinColorCode(bg);
+		text_ = std::move(text);
+	}
+
+	void textf::set_color(const ConsoleColor color)
+	{
+		color_ = color;
+	}
+
+	void textf::set_foreground_color(const ConsoleColor::color color)
+	{
+		color_.set_foreground_color(color);
+	}
+
+	void textf::set_background_color(const ConsoleColor::color color)
+	{
+		color_.set_background_color(color);
+	}
+
+	std::string textf::get_text() const
+	{
+		return text_;
+	}
+
+	ConsoleColor textf::get_color() const
+	{
+		return color_;
+	}
+
+	textf& textf::operator=(std::string str)
+	{
+		text_ = std::move(str);
+		return *this;
+	}
+
+	WORD textf::get_win_color(const ConsoleColor color)
+	{
+		return static_cast<WORD>(color.get_foreground_color()) + 16 * 
+			static_cast<WORD>(color.get_background_color());
 	}
 
 	WORD textf::setup_console() const
@@ -92,28 +122,16 @@ namespace cons
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		WORD old_attrib = -1;
 
-		try
-		{
-			// Get console info
-			if (!GetConsoleScreenBufferInfo(hout, &csbi))
-			{
-				throw WindowsConsoleFailureException();
-			}
+		// Get console info
+		if (!GetConsoleScreenBufferInfo(hout, &csbi))
+			throw WindowsConsoleFailureException();
 
-			// Save old colors
-			old_attrib = csbi.wAttributes;
+		// Save old colors
+		old_attrib = csbi.wAttributes;
 
-			// Set new color
-			if (!SetConsoleTextAttribute(
-				hout, getWinColor(m_foreground_color, m_background_color)))
-			{
-				throw WindowsConsoleFailureException();
-			}
-		}
-		catch (const WindowsConsoleFailureException & e)
-		{
-			std::cerr << e.what() << std::endl;
-		}
+		// Set new color
+		if (!SetConsoleTextAttribute(hout, get_win_color(color_)))
+			throw WindowsConsoleFailureException();
 
 		return old_attrib;
 	}
@@ -123,113 +141,29 @@ namespace cons
 		try
 		{
 			// Set color back
-			if (!SetConsoleTextAttribute(
-				GetStdHandle(STD_OUTPUT_HANDLE), old_attribs))
-			{
+			if (!SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 
+				old_attribs))
 				throw WindowsConsoleFailureException();
-			}
 		}
-		catch (const WindowsConsoleFailureException & e)
+		catch (const WindowsConsoleFailureException& e)
 		{
 			println<decltype(e.what())> p(e.what());
 		}
 	}
 
-	textf::textf()
-		: textf("")
+	void textf::copy(textf& dest, const textf& src) 
+	{
+		dest.text_ = src.text_;
+		dest.color_ = src.color_;
+	}
+
+	void textf::move(textf& dest, textf&& src) noexcept
+	{
+		dest.text_ = std::move(src.text_);
+		dest.color_ = src.color_;
+	}
+
+	InvalidConsoleLayerEnumValueException::InvalidConsoleLayerEnumValueException()
+		: InvalidConsoleEnumValueException("textf::layer")
 	{}
-
-	textf::textf(const std::string_view text)
-		: m_text(text)
-		, m_foreground_color(ConsoleColor::bright_white)
-		, m_background_color(ConsoleColor::black)
-	{}
-
-	void textf::display() const
-	{
-		const auto old_attribs = setup_console();
-		std::cout << m_text;
-		restore_console(old_attribs);
-	}
-
-	ConsoleColor textf::getColor(const Layer layer) const
-	{
-		try
-		{
-			switch (layer)
-			{
-			case Layer::foreground:
-				return m_foreground_color;
-
-			case Layer::background:
-				return m_background_color;
-
-			default:
-				throw InvalidLayerValueException();
-			}
-		}
-		catch (const InvalidLayerValueException & e)
-		{
-			println<decltype(e.what())> p(e.what());
-			exit(1);
-		}
-	}
-
-	void textf::set_color(const Layer layer, const ConsoleColor color)
-	{
-		try
-		{
-			switch (layer)
-			{
-			case Layer::foreground:
-				m_foreground_color = color;
-				break;
-
-			case Layer::background:
-				m_background_color = color;
-				break;
-
-			default:
-				throw InvalidLayerValueException();
-			}
-		}
-		catch (const InvalidLayerValueException & e)
-		{
-			println<decltype(e.what())> p(e.what());
-			exit(1);
-		}
-	}
-
-	void textf::modify_color(const Layer layer, const ConsoleColor color)
-	{
-		WORD new_win_color;
-		auto m_fg_win = getWinColorCode(m_foreground_color);
-		auto m_bg_win = getWinColorCode(m_background_color) * 16;
-
-		try
-		{
-			switch (layer)
-			{
-			case Layer::foreground:
-				new_win_color = getWinColorCode(color);
-				m_fg_win |= new_win_color;
-				m_foreground_color = static_cast<ConsoleColor>(m_fg_win);
-				break;
-
-			case Layer::background:
-				new_win_color = getWinColorCode(color) * 16;
-				m_bg_win |= new_win_color;
-				m_background_color = static_cast<ConsoleColor>(m_bg_win);
-				break;
-
-			default:
-				throw InvalidLayerValueException();
-			}
-		}
-		catch (const InvalidLayerValueException & e)
-		{
-			println<decltype(e.what())> p(e.what());
-			exit(1);
-		}
-	}
 } // namespace cons

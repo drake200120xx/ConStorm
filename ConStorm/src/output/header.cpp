@@ -1,12 +1,13 @@
 /*
  Code by Drake Johnson
 */
-#include "output/header.hpp"
-#include "output/prompt.hpp"
+
+#include "../../include/cons/output/header.hpp"
+#include "../../include/cons/output/prompt.hpp"
 
 namespace cons
 {
-	COORD Header::U_COORD::getShort() const
+	COORD Header::U_COORD::get_short() const
 	{
 		return { static_cast<SHORT>(X), static_cast<SHORT>(Y) };
 	}
@@ -24,25 +25,29 @@ namespace cons
 	{
 		bool is_equ = false;
 
-		if (this == &other)
-			is_equ = true;
-		else if (X == other.X && Y == other.Y)
+		if (this == &other || (X == other.X && Y == other.Y))
 			is_equ = true;
 
 		return is_equ;
 	}
 
+	Header::Header(std::string text)
+		: textf(std::move(text))
+		, m_cursor_location(get_live_console_cursor())
+		, update_cursor_(true)
+	{}
+
 	void Header::display() const
 	{
 		const auto old_attribs = setup_console();
-		print(m_text);
+		print(text_);
 		m_cursor_location.Y++; // Dashed line on next line
 		const auto dummy_attribs = setup_console(); // Reposition cursor
-		prompt(std::string(m_text.size() + 2, '-'));
+		prompt(std::string(text_.size() + 2, '-'));
 		restore_console(old_attribs);
 	}
 
-	void Header::setConsoleCursor(U_COORD position)
+	void Header::set_console_cursor(U_COORD position)
 	{
 		HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -61,7 +66,17 @@ namespace cons
 		}
 	}
 
-	Header::U_COORD Header::getConsoleCursorPos()
+	void Header::set_console_cursor(const unsigned x, const unsigned y)
+	{
+		set_console_cursor({ x, y });
+	}
+
+	Header::U_COORD Header::get_console_cursor() const
+	{
+		return m_cursor_location;
+	}
+
+	Header::U_COORD Header::get_console_cursor_pos()
 	{
 		HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -76,10 +91,10 @@ namespace cons
 		return pos;
 	}
 
-	Header::U_COORD Header::getLiveConsoleCursor()
+	Header::U_COORD Header::get_live_console_cursor()
 	{
-		auto cx = static_cast<unsigned>(-1);
-		auto cy = static_cast<unsigned>(-1);
+		static constexpr auto cx = static_cast<unsigned>(-1);
+		static constexpr auto cy = static_cast<unsigned>(-1);
 
 		return U_COORD{ cx, cy };
 	}
@@ -92,10 +107,10 @@ namespace cons
 
 		try
 		{
-			if (m_cursor_location == getLiveConsoleCursor())
-				m_cursor_location = getConsoleCursorPos();
+			if (m_cursor_location == get_live_console_cursor())
+				m_cursor_location = get_console_cursor_pos();
 
-			if (!SetConsoleCursorPosition(hout, m_cursor_location.getShort()))
+			if (!SetConsoleCursorPosition(hout, m_cursor_location.get_short()))
 				throw WindowsConsoleFailureException();
 		}
 		catch (const WindowsConsoleFailureException& e)
@@ -112,7 +127,7 @@ namespace cons
 
 		// Set cursor location if `update_cursor_`
 		if (update_cursor_) // Reset back to "live cursor" value
-			m_cursor_location = getLiveConsoleCursor();
+			m_cursor_location = get_live_console_cursor();
 		else // Restore back to original
 			m_cursor_location.Y--;
 	}

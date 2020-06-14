@@ -1,8 +1,9 @@
 /*
  Code by Drake Johnson
 */
-#include "output/clear_screen.hpp"
-#include "output/print.hpp"
+
+#include "../../include/cons/output/clear_screen.hpp"
+#include "../../include/cons/output/print.hpp"
 #ifdef _WIN32
 #   ifndef WIN32_LEAN_AND_MEAN
 #       define WIN32_LEAN_AND_MEAN

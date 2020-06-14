@@ -7,12 +7,13 @@ workspace "ConStorm"
 
 cons_include = "%{wks.location}/ConStorm/cons"
 sandbox_lib = "%{wks.location}Sandbox/lib/"
+lib_output = "%{prj.location}/lib/%{cfg.buildcfg}-%{cfg.architecture}/"
 bin_output = "%{prj.location}/bin/%{cfg.buildcfg}-%{cfg.architecture}/"
 obj_output = "%{prj.location}/obj/%{cfg.buildcfg}-%{cfg.architecture}/"
 
 
 project "ConStorm"
-	kind "StaticLib"
+	kind "SharedLib"
 	language "C++"
 	location "ConStorm"
 	files {
@@ -23,14 +24,10 @@ project "ConStorm"
 		"%{prj.location}/src/**.hpp",
 		"%{prj.location}/src/**.cpp"
 	}
-	targetdir (bin_output)
+	targetdir (lib_output)
 	objdir (obj_output)
 	includedirs {
 		"%{prj.location}/cons"
-	}
-	
-	postbuildcommands {
-		("{COPY} %{cfg.buildtarget.relpath} \"" .. sandbox_lib .. "\"")
 	}
 	
 	filter "configurations:Debug" 

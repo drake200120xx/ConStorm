@@ -2,15 +2,23 @@
  Code by Drake Johnson
 */
 
-#include "menus/info.hpp"
-#include "output.hpp"
-#include "input.hpp"
+#include "../../include/cons/menus/info.hpp"
+#include "../../include/cons/output.hpp"
+#include "../../include/cons/input.hpp"
 
 namespace cons
 {
-	InfoMenu::InfoMenu()
-		: InfoMenu("")
-	{}
+	struct InfoMenu::SectionPair
+	{
+		Header& header;
+		WordWrap& text;
+	};
+
+	struct InfoMenu::SectionPairRef
+	{
+		Header header;
+		WordWrap text;
+	};
 
 	InfoMenu::InfoMenu(Header title, MenuInterface* goto_next)
 		: m_title(std::move(title))
@@ -22,50 +30,30 @@ namespace cons
 	{}
 
 	InfoMenu::InfoMenu(const InfoMenu& other)
-		: m_title(other.m_title)
-		, m_desc(other.m_desc)
-		, m_section_headers(other.m_section_headers)
-		, m_section_texts(other.m_section_texts)
-		, m_pause_msg(other.m_pause_msg)
-		, m_goto_next(other.m_goto_next)
-	{}
+		: m_desc("", 80, 4)
+		, m_goto_next(nullptr)
+	{
+		copy(*this, other);
+	}
+
+	InfoMenu::InfoMenu(InfoMenu&& other) noexcept
+		: m_desc("", 80, 4)
+		, m_goto_next(nullptr)
+	{
+		move(*this, std::move(other));
+	}
 
 	InfoMenu& InfoMenu::operator=(const InfoMenu& other)
 	{
 		if (this != &other)
-		{
-			m_title = other.m_title;
-			m_desc = other.m_desc;
-			m_section_headers = other.m_section_headers;
-			m_section_texts = other.m_section_texts;
-			m_pause_msg = other.m_pause_msg;
-			m_goto_next = other.m_goto_next;
-		}
-
+			copy(*this, other);
 		return *this;
 	}
-
-	InfoMenu::InfoMenu(InfoMenu&& other) noexcept
-		: m_title(std::move(other.m_title))
-		, m_desc(std::move(m_desc))
-		, m_section_headers(std::move(m_section_headers))
-		, m_section_texts(std::move(other.m_section_texts))
-		, m_pause_msg(std::move(other.m_pause_msg))
-		, m_goto_next(other.m_goto_next)
-	{}
 
 	InfoMenu& InfoMenu::operator=(InfoMenu&& other) noexcept
 	{
 		if (this != &other)
-		{
-			m_title = std::move(other.m_title);
-			m_desc = std::move(other.m_desc);
-			m_section_headers = std::move(other.m_section_headers);
-			m_section_texts = std::move(other.m_section_texts);
-			m_pause_msg = std::move(other.m_pause_msg);
-			m_goto_next = other.m_goto_next;
-		}
-
+			move(*this, std::move(other));
 		return *this;
 	}
 
@@ -81,17 +69,21 @@ namespace cons
 		return m_goto_next;
 	}
 
-	void InfoMenu::set_description(const std::string& text)
+	void InfoMenu::set_title(Header title)
 	{
-		m_desc = WordWrap(text, m_desc.getCharCount(), m_desc.getTabSpaces());
+		m_title = std::move(title);
 	}
 
-	void InfoMenu::set_description(
-		const std::string& text, 
-		const unsigned char_count, 
-		const unsigned spaces_for_tab)
+	void InfoMenu::set_description(WordWrap desc)
 	{
-		m_desc = WordWrap(text, char_count, spaces_for_tab);
+		m_desc = std::move(desc);
+	}
+
+	void InfoMenu::set_description(std::string text)
+	{
+		set_description(WordWrap(
+			std::move(text), m_desc.get_char_count(), m_desc.get_tab_spaces()
+		));
 	}
 
 	void InfoMenu::set_section_headers(section_container headers)
@@ -111,23 +103,23 @@ namespace cons
 		m_section_texts.push_back(text);
 	}
 
-	void InfoMenu::append_section(
-		const Header& header, 
-		const std::string& text, 
-		unsigned char_count, 
-		unsigned spaces_for_tab)
-	{
-		m_section_headers.push_back(header);
-		m_section_texts.emplace_back(text, char_count, spaces_for_tab);
-	}
-
 	void InfoMenu::append_section(const Header& header, const std::string& text)
 	{
 		append_section(
-			header, text,
-			m_desc.getCharCount(),
-			m_desc.getTabSpaces()
+			header, WordWrap(
+				text, m_desc.get_char_count(), m_desc.get_tab_spaces()
+			)
 		);
+	}
+
+	void InfoMenu::set_pause_msg(std::string msg)
+	{
+		m_pause_msg = std::move(msg);
+	}
+
+	void InfoMenu::set_goto_next(MenuInterface* const goto_next)
+	{
+		m_goto_next = goto_next;
 	}
 
 	InfoMenu::section_container InfoMenu::get_section_headers() const
@@ -138,6 +130,16 @@ namespace cons
 	InfoMenu::text_container InfoMenu::get_section_texts() const
 	{
 		return m_section_texts;
+	}
+
+	InfoMenu::SectionPairRef InfoMenu::operator[](const size_t index)
+	{
+		return get_section_ref(index);
+	}
+
+	InfoMenu::SectionPair InfoMenu::operator[](const size_t index) const
+	{
+		return get_section(index);
 	}
 
 	void InfoMenu::display() const
@@ -167,9 +169,28 @@ namespace cons
 
 	InfoMenu::SectionPair InfoMenu::get_section(const size_t index) const
 	{
-		return {
-			m_section_headers.at(index),
-			m_section_texts.at(index)
-		};
+		auto sect_heads = m_section_headers.at(index);
+		auto sect_texts = m_section_texts.at(index);
+		return SectionPair{ sect_heads, sect_texts };
+	}
+
+	void InfoMenu::copy(InfoMenu& dest, const InfoMenu& src)
+	{
+		dest.m_title = src.m_title;
+		dest.m_desc = src.m_desc;
+		dest.m_section_headers = src.m_section_headers;
+		dest.m_section_texts = src.m_section_texts;
+		dest.m_pause_msg = src.m_pause_msg;
+		dest.m_goto_next = src.m_goto_next;
+	}
+
+	void InfoMenu::move(InfoMenu& dest, InfoMenu&& src) noexcept
+	{
+		dest.m_title = std::move(src.m_title);
+		dest.m_desc = std::move(src.m_desc);
+		dest.m_section_headers = std::move(src.m_section_headers);
+		dest.m_section_texts = std::move(src.m_section_texts);
+		dest.m_pause_msg = std::move(src.m_pause_msg);
+		dest.m_goto_next = src.m_goto_next;
 	}
 } // namespace cons

@@ -1,18 +1,20 @@
 /*
  Code by Drake Johnson
 */
-#include "output/word_wrap.hpp"
+#include "../../include/cons/output/word_wrap.hpp"
 
 namespace cons
 {
-	WordWrap::WordWrap(std::string orig_str, unsigned char_count, unsigned tab_spaces)
-		: m_orig_str(std::move(orig_str)), m_char_count(char_count)
-		, m_tab_spaces(tab_spaces)
+	WordWrap::WordWrap(std::string orig_str, const unsigned char_count, 
+		const unsigned tab_spaces)
+		: orig_str_(std::move(orig_str)), line_limit_(char_count)
+		, tab_spaces_(tab_spaces)
 	{
-		Wrap();
+		wrap();
 	}
 
-	WordWrap::WordWrap(const char* orig_str, unsigned char_count, unsigned tab_spaces)
+	WordWrap::WordWrap(const char* orig_str, const unsigned char_count, 
+		const unsigned tab_spaces)
 		: WordWrap(std::string(orig_str), char_count, tab_spaces)
 	{}
 
@@ -20,46 +22,46 @@ namespace cons
 	{
 		if (this != &other)
 		{
-			m_orig_str = other.m_orig_str;
-			m_char_count = other.m_char_count;
-			m_tab_spaces = other.m_tab_spaces;
-			m_processed_str = other.m_processed_str;
+			orig_str_ = other.orig_str_;
+			line_limit_ = other.line_limit_;
+			tab_spaces_ = other.tab_spaces_;
+			wrapped_ = other.wrapped_;
 		}
 		return *this;
 	}
 
 	WordWrap& WordWrap::operator=(const std::string& other)
 	{
-		m_orig_str = other;
-		Wrap();
+		orig_str_ = other;
+		wrap();
 		return *this;
 	}
 
 	WordWrap::WordWrap(WordWrap&& other) noexcept
-		: m_orig_str(std::move(other.m_orig_str))
-		, m_char_count(other.m_char_count)
-		, m_tab_spaces(other.m_tab_spaces)
-		, m_processed_str(std::move(other.m_processed_str))
+		: orig_str_(std::move(other.orig_str_))
+		, line_limit_(other.line_limit_)
+		, tab_spaces_(other.tab_spaces_)
+		, wrapped_(std::move(other.wrapped_))
 	{}
 
 	WordWrap& WordWrap::operator=(WordWrap&& other) noexcept
 	{
 		if (this != &other)
 		{
-			m_orig_str = std::move(other.m_orig_str);
-			m_char_count = other.m_char_count;
-			m_tab_spaces = other.m_tab_spaces;
-			m_processed_str = std::move(other.m_processed_str);
+			orig_str_ = std::move(other.orig_str_);
+			line_limit_ = other.line_limit_;
+			tab_spaces_ = other.tab_spaces_;
+			wrapped_ = std::move(other.wrapped_);
 		}
 		return *this;
 	}
 
 	WordWrap& WordWrap::operator=(std::string&& other) noexcept
 	{
-		m_orig_str = std::move(other);
+		orig_str_ = std::move(other);
 		try
 		{
-			Wrap();
+			wrap();
 		}
 		catch (const std::exception & ex)
 		{
@@ -68,143 +70,120 @@ namespace cons
 		return *this;
 	}
 
-	std::string WordWrap::getStr() const
+	std::deque<std::string> WordWrap::get_deque() const 
+	{
+		return wrapped_;
+	}
+
+	std::string WordWrap::get_str() const
 	{
 		std::string final_str;
-		for (const auto& str : m_processed_str)
+		for (const auto& str : wrapped_)
 			final_str += str + '\n';
 
 		return final_str + '\n';
 	}
 
-	void WordWrap::Wrap()
+	void WordWrap::wrap()
 	{
-		if (m_orig_str.size() <= m_char_count)
+		if (orig_str_.size() <= line_limit_)
 		{
-			m_processed_str.push_back(m_orig_str);
+			wrapped_.push_back(orig_str_);
 			return;
 		}
 
-		std::vector<std::string> all_tokens;
-		const std::unordered_set<char> delims{ ' ', '\n', '\t' };
-		const std::unordered_set<char> punct{
-			'.', ',', '?', '!', ':', ';', '-', '\'', '\"', '/', '\\'
-		};
-		std::string cur_token;  // String-building var
-		for (const char& ch : m_orig_str)
+		static const std::unordered_set<char> delims{ ' ', '\n', '\t' };
+		//static const std::unordered_set<char> punct{
+		//	'.', ',', '?', '!', ':', ';', '-', '\'', '\"', '/', '\\'
+		//};
+
+		std::string cur_token;
+		std::string cur_line;
+		wrapped_.clear();
+
+		// Build a token, then try to add it to the current line. If the current
+		// line can't fit the token, flush the current line to all_lines, reset
+		// the current line, and then add the current token
+		for (const auto& ch : orig_str_)
 		{
-			if (delims.find(ch) != delims.end())
-			{ // ch is a delim, so flush to all_tokens and reset cur_token
-				if (ch == '\n')
-				{ // ch is newline char and gets its own element
-					all_tokens.push_back(cur_token);
-					all_tokens.emplace_back("\n");
-					cur_token.clear();
+			if (delims.find(ch) != std::end(delims))
+			{ // Character is a delim
+				// If the character is a space, see if the weak token can fit
+				// on the current line (including the space). If not, move to
+				// a new line
+				if (ch == ' ')
+				{
+					if ((cur_line + cur_token + ' ').size() <= line_limit_)
+					{ // Size with new token is fine, add to current line
+						cur_line += cur_token + ' ';
+					}
+					else
+					{ // Size with new token is too big, flush current line
+						wrapped_.push_back(cur_line);
+						cur_line.clear();
+						cur_line += cur_token + ' ';
+					}
+				}
+				else if (ch == '\n')
+				{
+					cur_line += cur_token;
+					wrapped_.push_back(cur_line);
+					cur_line.clear();
 				}
 				else if (ch == '\t')
-				{ // ch is tab, so convert to spaces and add to next element
-					all_tokens.push_back(cur_token);
-					cur_token.clear();
-
-					std::string tab;
-					for (unsigned i = 0; i < m_tab_spaces; i++)
-					{ // Convert '\t' to spaces
-						tab += ' ';
+				{
+					std::string tab(tab_spaces_, ' ');
+					if ((cur_line + cur_token + tab).size() <= line_limit_)
+					{ // Size with new token is fine, add to current line
+						cur_line += cur_token + tab;
 					}
-					cur_token += tab;
+					else if ((cur_line + cur_token).size() <= line_limit_)
+					{ // Size with new token plus tab is too large, move tab to new line
+						cur_line += cur_token;
+						wrapped_.push_back(cur_line);
+						cur_line.clear();
+						cur_line += tab;
+					}
+					else
+					{ // The current token without the tab is too large
+						wrapped_.push_back(cur_line);
+						cur_line.clear();
+						cur_line += cur_token + tab;
+					}
+				}
+
+				// Always clear current token when delim reached
+				cur_token.clear();
+			}
+			else
+			{ // Normal character, so try to add it
+				// If the current token (plus a hyphen) here is bigger than the
+				// line allowance, that means the current token itself is 
+				// bigger than the line allowance and must be broken up and 
+				// hyphenated
+				if ((cur_token + ch).size() + 1 > line_limit_)
+				{ // Flush and reset the current token
+					wrapped_.push_back(cur_token + ch + '-');
+					cur_token.clear();
 				}
 				else
-				{ // ch is regular delim and gets no special treatment
-					all_tokens.push_back(cur_token);
-					cur_token.clear();
-				}
-			}
-			else
-			{ // Char is not delim, so add it to cur_token
-				cur_token += ch;
+					cur_token += ch;
 			}
 		}
-		// Flush last token to all_tokens
-		all_tokens.push_back(cur_token);
 
-		// Delete all empty elements (if any)
-		auto token_itr = all_tokens.begin();
-		unsigned short tmp_token_pos = 0;
-		while (token_itr != all_tokens.end())
+		// Flush final token
+		if ((cur_line + cur_token).size() <= line_limit_)
+			wrapped_.push_back(cur_line + cur_token);
+		else
 		{
-			if (token_itr->empty())
-			{ // Null strings throw std::out_of_range
-				all_tokens.erase(token_itr);
-
-				// Erase causes mem realloc, so reassign token
-				token_itr = (all_tokens.begin() + tmp_token_pos);
-			}
-			else
-				++token_itr, ++tmp_token_pos;
-		}
-
-		// Assemble tokens into lines
-		std::string cur_line;
-		for (auto token : all_tokens)
-		{
-			if (token == "\t")
-			{ // Convert to spaces
-				cur_line += std::string(m_tab_spaces - 1, ' ');
-			}
-
-			if (token == "\n")
-			{ // Manual line break; Flush to all_lines and reset cur_line
-				m_processed_str.push_back(cur_line);
-				cur_line.clear();
-			}
-			else if (token.size() + 1 > m_char_count)
-			{ // Token size (plus a space) larger than char_count; Flush to all_lines with hyphen
-				if (!cur_line.empty())
-					m_processed_str.push_back(cur_line);
-				std::string tmp_token;
-				unsigned pos = 0;
-
-				// Insert '-' upon reaching char_count - 2
-				while (pos < token.size())
-				{
-					for (unsigned i = 0; pos < token.size() && i < m_char_count - 2; i++, pos++)
-						tmp_token += token.at(pos);
-
-					if (pos < token.size())
-					{ // Not last char in token, so add hyphen
-						tmp_token += '-';
-					}
-					m_processed_str.push_back(tmp_token);
-					tmp_token.clear();
-				}
-
-				cur_line.clear();
-			}
-			else if (cur_line.size() + (token.size() + 1) > m_char_count)
-			{ // Token (plus a space) too large for current line; Flush to all_lines and reset cur_line
-				m_processed_str.push_back(cur_line);
-				cur_line.clear();
-
-				// Add token to cur_line
-				cur_line += token + ' ';
-			}
-			else
-			{ // Token not too large for current line; add it
-				cur_line += token + ' ';
-			}
-		}
-
-		if (!cur_line.empty())
-		{ // Flush last line to all_lines
-			m_processed_str.push_back(cur_line);
+			wrapped_.push_back(cur_line);
+			wrapped_.push_back(cur_token);
 		}
 	}
 
 	println<WordWrap, void>::println(const WordWrap& lines)
 	{
-		auto vec_strs = lines.getVec();
-		println<decltype(vec_strs)> p(vec_strs);
+		auto deque = lines.get_deque();
+		println<decltype(deque)> p(deque);
 	}
-
-
 } // namespace cons

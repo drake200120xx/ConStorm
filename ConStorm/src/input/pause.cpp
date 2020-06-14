@@ -2,7 +2,7 @@
  Code by Drake Johnson
 */
 
-#include "input/pause.hpp"
+#include "../../include/cons/input/pause.hpp"
 
 namespace cons
 {

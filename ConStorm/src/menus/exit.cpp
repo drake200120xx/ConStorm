@@ -2,8 +2,8 @@
  Code by Drake Johnson
 */
 
-#include "menus/exit.hpp"
-#include "input/pause.hpp"
+#include "../../include/cons/menus/exit.hpp"
+#include "../../include/cons/input/pause.hpp"
 
 namespace cons
 {

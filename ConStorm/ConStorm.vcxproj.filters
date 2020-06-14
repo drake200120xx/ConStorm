@@ -129,6 +129,44 @@
     <ClInclude Include="cons\output\word_wrap.hpp">
       <Filter>cons\output</Filter>
     </ClInclude>
+    <ClInclude Include="include\cons\files\file.hpp" />
+    <ClInclude Include="include\cons\files\load.hpp" />
+    <ClInclude Include="include\cons\input\input_function.hpp" />
+    <ClInclude Include="include\cons\input\input_set.hpp" />
+    <ClInclude Include="include\cons\input\pause.hpp" />
+    <ClInclude Include="include\cons\menus\function\default.hpp" />
+    <ClInclude Include="include\cons\menus\function\no_params.hpp" />
+    <ClInclude Include="include\cons\menus\function\void_params.hpp" />
+    <ClInclude Include="include\cons\menus\exit.hpp" />
+    <ClInclude Include="include\cons\menus\function.hpp" />
+    <ClInclude Include="include\cons\menus\info.hpp" />
+    <ClInclude Include="include\cons\menus\input.hpp" />
+    <ClInclude Include="include\cons\menus\interface.hpp" />
+    <ClInclude Include="include\cons\menus\loop.hpp" />
+    <ClInclude Include="include\cons\menus\menu.hpp" />
+    <ClInclude Include="include\cons\output\println\master.hpp" />
+    <ClInclude Include="include\cons\output\println\set.hpp" />
+    <ClInclude Include="include\cons\output\println\textf.hpp" />
+    <ClInclude Include="include\cons\output\println\vector.hpp" />
+    <ClInclude Include="include\cons\output\clear_screen.hpp" />
+    <ClInclude Include="include\cons\output\header.hpp" />
+    <ClInclude Include="include\cons\output\print.hpp" />
+    <ClInclude Include="include\cons\output\println.hpp" />
+    <ClInclude Include="include\cons\output\prompt.hpp" />
+    <ClInclude Include="include\cons\output\word_wrap.hpp" />
+    <ClInclude Include="include\cons\file.hpp" />
+    <ClInclude Include="include\cons\input.hpp" />
+    <ClInclude Include="include\cons\menus.hpp" />
+    <ClInclude Include="include\cons\output.hpp" />
+    <ClInclude Include="include\cons\utilities\random.hpp" />
+    <ClInclude Include="include\cons\utilities.hpp" />
+    <ClInclude Include="include\cons\output\println\deque.hpp" />
+    <ClInclude Include="include\cons\utilities\make_string.hpp" />
+    <ClInclude Include="include\cons\utilities\console\color.hpp" />
+    <ClInclude Include="include\cons\utilities\console\exception.hpp" />
+    <ClInclude Include="include\cons\utilities\console\font.hpp" />
+    <ClInclude Include="include\cons\utilities\console\window.hpp" />
+    <ClInclude Include="include\cons\utilities\console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\files\file.cpp">
@@ -170,5 +208,10 @@
     <ClCompile Include="src\output\word_wrap.cpp">
       <Filter>src\output</Filter>
     </ClCompile>
+    <ClCompile Include="src\utilities\random.cpp" />
+    <ClCompile Include="src\utilities\console\color.cpp" />
+    <ClCompile Include="src\utilities\console\exception.cpp" />
+    <ClCompile Include="src\utilities\console\font.cpp" />
+    <ClCompile Include="src\utilities\console\window.cpp" />
   </ItemGroup>
 </Project>

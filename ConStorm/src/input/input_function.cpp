@@ -2,7 +2,7 @@
  Code by Drake Johnson
 */
 
-#include "input/input_function.hpp"
+#include "../../include/cons/input/input_function.hpp"
 
 namespace cons
 {

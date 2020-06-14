@@ -2,9 +2,9 @@
  Code by Drake Johnson
 */
 
-#include "menus/menu.hpp"
-#include "output.hpp"
-#include "input.hpp"
+#include "../../include/cons/menus/menu.hpp"
+#include "../../include/cons/output.hpp"
+#include "../../include/cons/input.hpp"
 
 namespace cons
 {
@@ -12,59 +12,43 @@ namespace cons
 	{
 		[[nodiscard]] const char* what() const override
 		{
-			return "m_options and m_gotos must be the same size!";
+			return "options_ and gotos_ must be the same size!";
 		}
 	};
 
 	Menu::Menu()
-		: m_desc("", 80, 4)
+		: desc_("", 80, 4)
 	{}
 
 	Menu::Menu(Header title)
-		: m_title(std::move(title))
-		, m_desc("", 80, 4)
+		: title_(std::move(title))
+		, desc_("", 80, 4)
 	{}
 
 	Menu::Menu(const Menu& other)
-		: m_title(other.m_title)
-		, m_desc(other.m_desc)
-		, m_prompt_msg(other.m_prompt_msg)
-		, m_options(other.m_options)
-		, m_gotos(other.m_gotos)
-	{}
+		: Menu()
+	{
+		copy(*this, other);
+	}
+
+	Menu::Menu(Menu&& other) noexcept
+		: Menu()
+	{
+		move(*this, std::move(other));
+	}
 
 	Menu& Menu::operator=(const Menu& other)
 	{
 		if (this != &other)
-		{
-			m_title = other.m_title;
-			m_desc = other.m_desc;
-			m_prompt_msg = other.m_prompt_msg;
-			m_options = other.m_options;
-			m_gotos = other.m_gotos;
-		}
+			copy(*this, other);
 
 		return *this;
 	}
 
-	Menu::Menu(Menu&& other) noexcept
-		: m_title(std::move(other.m_title))
-		, m_desc(std::move(other.m_desc))
-		, m_prompt_msg(std::move(other.m_prompt_msg))
-		, m_options(std::move(other.m_options))
-		, m_gotos(std::move(other.m_gotos))
-	{}
-
 	Menu& Menu::operator=(Menu&& other) noexcept
 	{
 		if (this != &other)
-		{
-			m_title = std::move(other.m_title);
-			m_desc = std::move(other.m_desc);
-			m_prompt_msg = std::move(other.m_prompt_msg);
-			m_options = std::move(other.m_options);
-			m_gotos = std::move(other.m_gotos);
-		}
+			move(*this, std::move(other));
 
 		return *this;
 	}
@@ -73,7 +57,7 @@ namespace cons
 	{
 		display();
 
-		const auto options_size = m_options.size();
+		const auto options_size = options_.size();
 		const auto user_input = input<unsigned>(
 			[&options_size](size_t input) -> bool
 			{
@@ -81,46 +65,49 @@ namespace cons
 			}
 		);
 
-		return m_gotos.at(user_input - 1);
+		return gotos_.at(user_input - 1);
+	}
+
+	void Menu::set_title(Header title)
+	{
+		title_ = std::move(title);
+	}
+
+	void Menu::set_description(WordWrap desc)
+	{
+		desc_ = std::move(desc);
 	}
 
 	void Menu::set_description(std::string desc_text)
 	{
-		m_desc =
-			WordWrap(
-				std::move(desc_text),
-				m_desc.getCharCount(),
-				m_desc.getTabSpaces());
+		desc_ = WordWrap(std::move(desc_text), desc_.get_char_count(),
+				desc_.get_tab_spaces()
+		);
 	}
 
-	void Menu::set_description(
-		std::string desc_text, 
-		const unsigned char_per_line,
-		const unsigned spaces_for_tab)
+	void Menu::set_description(std::string desc_text, 
+		const unsigned char_per_line, const unsigned spaces_for_tab)
 	{
-		m_desc = WordWrap(
-			std::move(desc_text),
-			char_per_line,
-			spaces_for_tab);
+		desc_ = WordWrap(std::move(desc_text), char_per_line, spaces_for_tab);
 	}
 
 	void Menu::set_prompt_msg(std::string prompt_msg)
 	{
-		m_prompt_msg = std::move(prompt_msg);
+		prompt_msg_ = std::move(prompt_msg);
 	}
 
 
-	void Menu::set_options(const options_container& options, const menu_container& gotos)
+	void Menu::set_options(options_container options, menu_container gotos)
 	{
 		try
 		{
 			if (options.size() != gotos.size())
 				throw menu_options_size_mismatch_exception();
 
-			m_options = options;
-			m_gotos = gotos;
+			options_ = std::move(options);
+			gotos_ = std::move(gotos);
 		}
-		catch (const menu_options_size_mismatch_exception & err)
+		catch (const menu_options_size_mismatch_exception& err)
 		{
 			print(err.what());
 		}
@@ -128,8 +115,28 @@ namespace cons
 
 	void Menu::append_option(const std::string& option, MenuInterface* goto_menu)
 	{
-		m_options.push_back(option);
-		m_gotos.push_back(goto_menu);
+		options_.push_back(option);
+		gotos_.push_back(goto_menu);
+	}
+
+	Menu::OptionPairPtr Menu::operator[](const size_t index)
+	{
+		return get_option_ptr(index);
+	}
+
+	Menu::OptionPair Menu::operator[](const size_t index) const
+	{
+		return get_option(index);
+	}
+
+	Header Menu::get_title() const
+	{
+		return title_;
+	}
+
+	WordWrap Menu::get_description() const
+	{
+		return desc_;
 	}
 
 	void Menu::display() const
@@ -137,32 +144,51 @@ namespace cons
 		cls();
 
 		print(
-			m_title,
-			m_desc,
+			title_,
+			desc_,
 			""
 		);
 
-		for (size_t i = 0; i < m_options.size(); ++i)
+		for (size_t i = 0; i < options_.size(); ++i)
 		{
 			std::cout
 				<< " (" << (i + 1) << ") "
-				<< m_options.at(i) << '\n';
+				<< options_.at(i) << '\n';
 		}
 		std::cout << std::endl;
 
-		if (m_prompt_msg.empty())
+		if (prompt_msg_.empty())
 			prompt();
 		else
-			prompt(m_prompt_msg);
+			prompt(prompt_msg_);
 	}
 
 	Menu::OptionPairPtr Menu::get_option_ptr(const size_t index)
 	{
-		return { m_options.at(index), m_gotos.at(index) };
+		return { options_.at(index), gotos_.at(index) };
 	}
 
 	Menu::OptionPair Menu::get_option(const size_t index) const
 	{
-		return { m_options.at(index), m_gotos.at(index) };
+		return { options_.at(index), gotos_.at(index) };
 	}
+
+	void Menu::copy(Menu& dest, const Menu& src)
+	{
+		dest.title_ = src.title_;
+		dest.desc_ = src.desc_;
+		dest.prompt_msg_ = src.prompt_msg_;
+		dest.options_ = src.options_;
+		dest.gotos_ = src.gotos_;
+	}
+
+	void Menu::move(Menu& dest, Menu&& src) noexcept
+	{
+		dest.title_ = std::move(src.title_);
+		dest.desc_ = std::move(src.desc_);
+		dest.prompt_msg_ = std::move(src.prompt_msg_);
+		dest.options_ = std::move(src.options_);
+		dest.gotos_ = std::move(src.gotos_);
+	}
+
 } // namespace cons

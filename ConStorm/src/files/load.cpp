@@ -1,8 +1,7 @@
 /*
  Code by Drake Johnson
 */
-
-#include "files/load.hpp"
+#include "../../include/cons/files/load.hpp"
 namespace fs = std::filesystem;
 
 static std::mutex s_files_mutex;
