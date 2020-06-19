@@ -47,7 +47,6 @@ namespace cons
 		return name;
 	}
 
-
 	ConsoleFont::ConsoleFont()
 		: family_(family::other)
 		, size_(size::other)
@@ -57,7 +56,7 @@ namespace cons
 		current_font.cbSize = sizeof(CONSOLE_FONT_INFOEX);
 
 		if (!GetCurrentConsoleFontEx(hout, false, &current_font))
-			throw GetCurrentWindowsConsoleFontFailureException();
+			throw CurrentWindowsConsoleFontFailureException();
 
 		*this = get_cons_font(current_font);
 	}
@@ -116,43 +115,26 @@ namespace cons
 		return size_;
 	}
 
-	CONSOLE_FONT_INFOEX ConsoleFont::get_windows_console_font(const ConsoleFont font)
+	CONSOLE_FONT_INFOEX ConsoleFont::get_windows_console_font(const ConsoleFont& font)
 	{
 		CONSOLE_FONT_INFOEX converted_font;
 		converted_font.cbSize = sizeof(CONSOLE_FONT_INFOEX);
 		converted_font.nFont = 0;
+		converted_font.dwFontSize.X = 0;
 		converted_font.FontFamily = FF_DONTCARE;
 		converted_font.FontWeight = FW_NORMAL;
 
-		SHORT width_x, height_y;
+		SHORT height_y;
 		switch (font.size_)
 		{
-		case size::pt_10: case size::pt_12: case size::pt_14: case size::pt_16:
-			width_x = static_cast<SHORT>(font.size_) / 2;
-			height_y = static_cast<SHORT>(font.size_);
-			break;
-
-		case size::pt_18:
-			width_x = 9;
-			height_y = static_cast<SHORT>(font.size_);
-			break;
-
-		case size::pt_24:
-			width_x = 11;
-			height_y = static_cast<SHORT>(font.size_);
-			break;
-
-		case size::pt_36:
-			width_x = 17;
-			height_y = static_cast<SHORT>(font.size_);
-			break;
-
-		case size::other: default:
-			width_x = static_cast<SHORT>(size::pt_12) / 2;
+		case size::other:
 			height_y = static_cast<SHORT>(size::pt_12);
 			break;
+
+		default:
+			height_y = static_cast<SHORT>(font.size_);
+			break;
 		}
-		converted_font.dwFontSize.X = width_x;
 		converted_font.dwFontSize.Y = height_y;
 
 		std::wstring font_name;
@@ -191,12 +173,14 @@ namespace cons
 
 		// Deconstruct the current font to get the font size
 		const std::vector<unsigned> size_values{ 10, 12, 14, 16, 18, 24, 36 };
-		std::vector<long> size_value_deviation;
+		std::vector<unsigned long> size_value_deviation;
 		size_value_deviation.resize(size_values.size());
 
 		for (const auto& value : size_values)
-			size_value_deviation.push_back(static_cast<long>(value) -
-				font.dwFontSize.Y);
+			// Must use lots of casts here to ensure no ambiguous function 
+			// calls and to cast it into its needed type at the end
+			size_value_deviation.push_back(static_cast<unsigned long>(abs(
+				static_cast<long long>(value) - font.dwFontSize.Y)));
 
 		auto min_size_deviation = size_value_deviation.at(0);
 		size_t min_size_deviation_index = 0;
