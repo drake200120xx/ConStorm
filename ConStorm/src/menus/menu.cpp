@@ -2,9 +2,9 @@
  Code by Drake Johnson
 */
 
-#include "../../include/cons/menus/menu.hpp"
-#include "../../include/cons/output.hpp"
-#include "../../include/cons/input.hpp"
+#include <cons/menus/menu.hpp>
+#include <cons/output.hpp>
+#include <cons/input.hpp>
 
 namespace cons
 {

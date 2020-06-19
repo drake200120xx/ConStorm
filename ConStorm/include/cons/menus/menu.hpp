@@ -29,7 +29,7 @@
 #ifndef CONS_MENU_MENU_HEADER__
 #define CONS_MENU_MENU_HEADER__
 #include "interface.hpp"
-#include "../output/header.hpp"
+#include <cons/output/header.hpp>
 
 namespace cons
 {
