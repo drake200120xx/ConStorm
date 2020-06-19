@@ -2,8 +2,8 @@
  Code by Drake Johnson
 */
 
-#include "../../include/cons/output/header.hpp"
-#include "../../include/cons/output/prompt.hpp"
+#include <cons/output/header.hpp>
+#include <cons/output/prompt.hpp>
 
 namespace cons
 {
@@ -33,7 +33,7 @@ namespace cons
 
 	Header::Header(std::string text)
 		: textf(std::move(text))
-		, m_cursor_location(get_live_console_cursor())
+		, cursor_location_(get_live_console_cursor())
 		, update_cursor_(true)
 	{}
 
@@ -41,7 +41,7 @@ namespace cons
 	{
 		const auto old_attribs = setup_console();
 		print(text_);
-		m_cursor_location.Y++; // Dashed line on next line
+		cursor_location_.Y++; // Dashed line on next line
 		const auto dummy_attribs = setup_console(); // Reposition cursor
 		prompt(std::string(text_.size() + 2, '-'));
 		restore_console(old_attribs);
@@ -61,7 +61,7 @@ namespace cons
 
 		if (position.X <= maxX && position.Y <= maxY)
 		{
-			m_cursor_location = position;
+			cursor_location_ = position;
 			update_cursor_ = false;
 		}
 	}
@@ -73,7 +73,7 @@ namespace cons
 
 	Header::U_COORD Header::get_console_cursor() const
 	{
-		return m_cursor_location;
+		return cursor_location_;
 	}
 
 	Header::U_COORD Header::get_console_cursor_pos()
@@ -107,10 +107,10 @@ namespace cons
 
 		try
 		{
-			if (m_cursor_location == get_live_console_cursor())
-				m_cursor_location = get_console_cursor_pos();
+			if (cursor_location_ == get_live_console_cursor())
+				cursor_location_ = get_console_cursor_pos();
 
-			if (!SetConsoleCursorPosition(hout, m_cursor_location.get_short()))
+			if (!SetConsoleCursorPosition(hout, cursor_location_.get_short()))
 				throw WindowsConsoleFailureException();
 		}
 		catch (const WindowsConsoleFailureException& e)
@@ -127,8 +127,8 @@ namespace cons
 
 		// Set cursor location if `update_cursor_`
 		if (update_cursor_) // Reset back to "live cursor" value
-			m_cursor_location = get_live_console_cursor();
+			cursor_location_ = get_live_console_cursor();
 		else // Restore back to original
-			m_cursor_location.Y--;
+			cursor_location_.Y--;
 	}
 } // namespace cons

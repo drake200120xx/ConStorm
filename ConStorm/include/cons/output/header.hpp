@@ -35,14 +35,14 @@ namespace cons
 	 header.set_text("Heading 1");
 	 
 	 // Reset color attributes to 0
-	 header.resetColor();
+	 header.reset_color();
 	 
 	 // Set foreground and background colors
-	 header.setForegroundColor(cons::ConsoleColor::purple);
-	 header.setBackgroundColor(cons::ConsoleColor::white);
+	 header.set_foreground_color(cons::ConsoleColor::color::purple);
+	 header.set_background_color(cons::ConsoleColor::color::white);
 	 
 	 // Set position for first letter of header
-	 header.setCursorLocation(0, 0);
+	 header.set_cursor_location(0, 0);
 	 @endcode
 	*/
 	class Header : public textf
@@ -73,12 +73,11 @@ namespace cons
 		[[nodiscard]] U_COORD get_console_cursor() const;
 
 	private:
-		// INHERITED VARIABLES              //
-		// std::string_view text_;         //
-		// ConsoleColor foreground_color_; //
-		// ConsoleColor background_color_; //
+		// INHERITED VARIABLES      //
+		// std::string_view text_;  //
+		// ConsoleColor color_;     //
 
-		mutable U_COORD m_cursor_location;
+		mutable U_COORD cursor_location_;
 		bool update_cursor_;
 
 		static U_COORD get_console_cursor_pos();
