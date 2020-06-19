@@ -6,6 +6,12 @@
 #ifndef CONS_UTILITIES_RANDOM_HEADER__
 #define CONS_UTILITIES_RANDOM_HEADER__
 #include <random>
+#ifdef min
+#   undef min
+#endif // min
+#ifdef max
+#   undef max
+#endif // max
 
 namespace cons
 {
