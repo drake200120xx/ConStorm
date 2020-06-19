@@ -90,7 +90,7 @@ namespace cons
 		 @returns Windows console API compatible font struct
 		*/
 		[[nodiscard]] static CONSOLE_FONT_INFOEX get_windows_console_font(
-			ConsoleFont font);
+			const ConsoleFont& font);
 
 		/**
 		 Converts a Windows console font object to a ConsoleFont object and
