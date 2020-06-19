@@ -6,6 +6,7 @@
 #ifndef CONS_UTILITIES_HEADER__
 #define CONS_UTILITIES_HEADER__
 
+#include "utilities/console.hpp"
 #include "utilities/make_string.hpp"
 #include "utilities/random.hpp"
 
